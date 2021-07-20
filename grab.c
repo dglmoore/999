@@ -1,4 +1,3 @@
-/* Copyright (c) 1994 David Hogan, see README for licence details */
 #include <stdio.h>
 #include <X11/X.h>
 #include <X11/Xos.h>
@@ -151,7 +150,7 @@ Menu * m;
         XMaskEvent(dpy, MenuMask, &ev);
         switch (ev.type) {
         default:
-            fprintf(stderr, "9wm: menuhit: unknown ev.type %d\n", ev.type);
+            fprintf(stderr, "999: menuhit: unknown ev.type %d\n", ev.type);
             break;
         case ButtonPress:
             break;

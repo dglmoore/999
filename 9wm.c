@@ -1,4 +1,3 @@
-/* Copyright (c) 1994 David Hogan, see README for licence details */
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -19,7 +18,8 @@
 
 char    *version[] = {
     "9wm version 1.1, Copyright (c) 1994 David Hogan",
-    "999 version 0.4.2, Copyright (c) 2000-2003 Benjamin Drieu", 0,
+    "w9wm version 0.4.2, Copyright (c) 2000-2003 Benjamin Drieu", 0,
+    "999 version 0.0.1, Copyright (c) 2021 Douglas G. Moore", 0,
 };
 
 Display         *dpy;
@@ -44,21 +44,22 @@ int             min_cmaps;
 int             curtime;
 int             debug;
 int             signalled;
-Bool 		click_passes = 0;
-Bool		use_keys = 1;
-int		numvirtuals = 4;
-char *		progsnames[16];
+Bool            click_passes = 0;
+Bool            use_keys = 1;
+int             numvirtuals = 4;
+char            *progsnames[16];
+FILE            *barhandle;
 
-Atom        exit_9wm;
-Atom        restart_9wm;
+Atom        exit_999;
+Atom        restart_999;
 Atom        wm_state;
 Atom        wm_change_state;
 Atom        wm_protocols;
 Atom        wm_delete;
 Atom        wm_take_focus;
 Atom        wm_colormaps;
-Atom        _9wm_running;
-Atom        _9wm_hold_mode;
+Atom        _999_running;
+Atom        _999_hold_mode;
 
 void    usage(), sighandler(), getevent();
 
@@ -90,6 +91,10 @@ int isdigitkey(unsigned int x) {
     default:
         return 0;
     }
+}
+
+void xmobar() {
+    barhandle = popen("xmobar", "w");
 }
 
 int
@@ -140,7 +145,7 @@ char    *argv[];
             if (n > 0 && n <= 12)
                 numvirtuals = n;
             else
-                fprintf(stderr, "9wm: wrong number of virtual screens, must be between 1 and 12\n");
+                fprintf(stderr, "999: wrong number of virtual screens, must be between 1 and 12\n");
         } else if (argv[i][0] == '-')
             usage();
         else
@@ -179,17 +184,17 @@ char    *argv[];
     if (signal(SIGHUP, sighandler) == SIG_IGN)
         signal(SIGHUP, SIG_IGN);
 
-    exit_9wm = XInternAtom(dpy, "9WM_EXIT", False);
-    restart_9wm = XInternAtom(dpy, "9WM_RESTART", False);
+    exit_999 = XInternAtom(dpy, "999_EXIT", False);
+    restart_999 = XInternAtom(dpy, "999_RESTART", False);
 
     curtime = -1;       /* don't care */
     if (do_exit) {
-        sendcmessage(root, exit_9wm, 0L);
+        sendcmessage(root, exit_999, 0L);
         XSync(dpy, False);
         exit(0);
     }
     if (do_restart) {
-        sendcmessage(root, restart_9wm, 0L);
+        sendcmessage(root, restart_999, 0L);
         XSync(dpy, False);
         exit(0);
     }
@@ -200,22 +205,22 @@ char    *argv[];
     wm_delete = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
     wm_take_focus = XInternAtom(dpy, "WM_TAKE_FOCUS", False);
     wm_colormaps = XInternAtom(dpy, "WM_COLORMAP_WINDOWS", False);
-    _9wm_running = XInternAtom(dpy, "_9WM_RUNNING", False);
-    _9wm_hold_mode = XInternAtom(dpy, "_9WM_HOLD_MODE", False);
+    _999_running = XInternAtom(dpy, "_999_RUNNING", False);
+    _999_hold_mode = XInternAtom(dpy, "_999_HOLD_MODE", False);
 
     black = BlackPixel(dpy, screen);
     white = WhitePixel(dpy, screen);
 
     if (fname != 0)
         if ((font = XLoadQueryFont(dpy, fname)) == 0)
-            fprintf(stderr, "9wm: warning: can't load font %s\n", fname);
+            fprintf(stderr, "999: warning: can't load font %s\n", fname);
 
     if (font == 0) {
         i = 0;
         for (;;) {
             fname = fontlist[i++];
             if (fname == 0) {
-                fprintf(stderr, "9wm: can't find a font\n");
+                fprintf(stderr, "999: can't find a font\n");
                 exit(1);
             }
             font = XLoadQueryFont(dpy, fname);
@@ -262,13 +267,16 @@ char    *argv[];
 
     /* set selection so that 9term knows we're running */
     curtime = CurrentTime;
-    XSetSelectionOwner(dpy, _9wm_running, menuwin, timestamp());
+    XSetSelectionOwner(dpy, _999_running, menuwin, timestamp());
 
     XSync(dpy, False);
     initting = 0;
 
     nofocus();
     scanwins();
+
+    xmobar();
+    fprintf(barhandle, "[%d]\n", virtual + 1);
 
     for (;;) {
         getevent(&ev);
@@ -286,7 +294,7 @@ char    *argv[];
                 shapenotify((XShapeEvent *)&ev);
             else
 #endif
-                fprintf(stderr, "9wm: unknown ev.type %d\n", ev.type);
+                fprintf(stderr, "999: unknown ev.type %d\n", ev.type);
             break;
         case KeyRelease:
             if (use_keys && current) {
@@ -296,38 +304,53 @@ char    *argv[];
             break;
         case KeyPress:
             if (use_keys) {
-                if (getKeysym(&ev) == XK_Tab && (ev.xkey.state & Mod1Mask)) {
-                    if (ev.xkey.state & ShiftMask) {
-                        activateprevious();
-                    } else {
-                        activatenext();
-                    }
-                } else if (isdigitkey(getKeysym(&ev)) && (ev.xkey.state & Mod1Mask)) {
-                    switch_to(isdigitkey(XLookupKeysym(&(ev.xkey),0)) - 1);
-                    if (current) {
-                        cmapfocus(current);
-                    }
-                } else if (getKeysym(&ev) == XK_p && (ev.xkey.state & Mod1Mask)) {
-                    if (fork() == 0) {
-                        if (fork() == 0) {
-                            close(ConnectionNumber(dpy));
-                            execlp("dmenu_run", "dmenu_run", 0);
-                            exit(1);
-                        }
-                        exit(0);
-                    }
-                    wait((int*)0);
-                } else if (getKeysym(&ev) == XK_Return && (ev.xkey.state & Mod1Mask)) {
-                   spawn();
-                } else if (getKeysym(&ev) == XK_m && (ev.xkey.state & Mod1Mask)) {
-                   move(current);
-                } else if (getKeysym(&ev) == XK_r && (ev.xkey.state & Mod1Mask)) {
-                   reshape(current);
+                if (ev.xkey.state & Mod1Mask) {
+                   if (getKeysym(&ev) == XK_Tab) {
+                       if (ev.xkey.state & ShiftMask) {
+                           activateprevious();
+                       } else {
+                           activatenext();
+                       }
+                   } else if (isdigitkey(getKeysym(&ev))) {
+                       switch_to(isdigitkey(XLookupKeysym(&(ev.xkey),0)) - 1);
+                       if (current) {
+                           cmapfocus(current);
+                       }
+                   } else if (getKeysym(&ev) == XK_p) {
+                       if (fork() == 0) {
+                           if (fork() == 0) {
+                               close(ConnectionNumber(dpy));
+                               execlp("dmenu_run", "dmenu_run", 0);
+                               exit(1);
+                           }
+                           exit(0);
+                       }
+                       wait((int*)0);
+                   } else if (getKeysym(&ev) == XK_Return) {
+                      spawn();
+                   } else if (getKeysym(&ev) == XK_m) {
+                      move(current);
+                   } else if (getKeysym(&ev) == XK_r) {
+                      reshape(current);
+                   } else if (getKeysym(&ev) == XK_q) {
+                      if (ev.xkey.state & ShiftMask) {
+                         sendcmessage(root, exit_999, 0L);
+                         XSync(dpy, False);
+                         exit(0);
+                      } else {
+                         sendcmessage(root, restart_999, 0L);
+                         XSync(dpy, False);
+                      }
+                   } else {
+                      ev.xkey.window = current->window;
+                      XSendEvent(dpy, current->window, False, NoEventMask, &ev);
+                   }
                 } else if (current) {
-                    ev.xkey.window = current->window;
-                    XSendEvent(dpy, current->window, False, NoEventMask, &ev);
+                   ev.xkey.window = current->window;
+                   XSendEvent(dpy, current->window, False, NoEventMask, &ev);
                 }
             }
+            XAllowEvents(dpy, SyncBoth, ev.xkey.time);
             break;
         case ButtonPress:
             button(&ev.xbutton);
@@ -366,13 +389,13 @@ char    *argv[];
             property(&ev.xproperty);
             break;
         case SelectionClear:
-            fprintf(stderr, "9wm: SelectionClear (this should not happen)\n");
+            fprintf(stderr, "999: SelectionClear (this should not happen)\n");
             break;
         case SelectionNotify:
-            fprintf(stderr, "9wm: SelectionNotify (this should not happen)\n");
+            fprintf(stderr, "999: SelectionNotify (this should not happen)\n");
             break;
         case SelectionRequest:
-            fprintf(stderr, "9wm: SelectionRequest (this should not happen)\n");
+            fprintf(stderr, "999: SelectionRequest (this should not happen)\n");
             break;
         case EnterNotify:
             enter(&ev.xcrossing);
@@ -472,7 +495,7 @@ long x;
         mask = SubstructureRedirectMask;        /* magic! */
     status = XSendEvent(dpy, w, False, mask, &ev);
     if (status == 0)
-        fprintf(stderr, "9wm: sendcmessage failed\n");
+        fprintf(stderr, "999: sendcmessage failed\n");
 }
 
 Time
@@ -480,7 +503,7 @@ timestamp() {
     XEvent ev;
 
     if (curtime == CurrentTime) {
-        XChangeProperty(dpy, root, _9wm_running, _9wm_running, 8,
+        XChangeProperty(dpy, root, _999_running, _999_running, 8,
                         PropModeAppend, (unsigned char *)"", 0);
         XMaskEvent(dpy, PropertyChangeMask, &ev);
         curtime = ev.xproperty.time;
@@ -600,7 +623,7 @@ XMapRequestEvent *e;
     curtime = CurrentTime;
     c = getclient(e->window, 0);
     if (c == 0 || c->window != e->window) {
-        fprintf(stderr, "9wm: bogus mapreq %p %p\n", c, (void*)e->window);
+        fprintf(stderr, "999: bogus mapreq %p %p\n", c, (void*)e->window);
         return;
     }
 
@@ -707,15 +730,15 @@ XClientMessageEvent *e;
     Client *c;
 
     curtime = CurrentTime;
-    if (e->window == root && e->message_type == exit_9wm) {
+    if (e->window == root && e->message_type == exit_999) {
         cleanup();
         exit(0);
     }
-    if (e->window == root && e->message_type == restart_9wm) {
-        fprintf(stderr, "*** 9wm restarting ***\n");
+    if (e->window == root && e->message_type == restart_999) {
+        fprintf(stderr, "*** 999 restarting ***\n");
         cleanup();
         execvp(myargv[0], myargv);
-        perror("9wm: exec failed");
+        perror("999: exec failed");
         exit(1);
     }
     if (e->message_type == wm_change_state) {
@@ -724,11 +747,11 @@ XClientMessageEvent *e;
             if (normal(c))
                 hide(c);
         } else
-            fprintf(stderr, "9wm: WM_CHANGE_STATE: format %d data %d w 0p%p\n",
+            fprintf(stderr, "999: WM_CHANGE_STATE: format %d data %d w 0p%p\n",
                     e->format, (int)e->data.l[0], (void*)e->window);
         return;
     }
-    fprintf(stderr, "9wm: strange ClientMessage, type 0x%x window 0x%x\n",
+    fprintf(stderr, "999: strange ClientMessage, type 0x%x window 0x%x\n",
             (int)e->message_type, (int)e->window);
 }
 
@@ -792,8 +815,8 @@ XPropertyEvent *e;
         gettrans(c);
         return;
     }
-    if (a == _9wm_hold_mode) {
-        c->hold = getiprop(c->window, _9wm_hold_mode);
+    if (a == _999_hold_mode) {
+        c->hold = getiprop(c->window, _999_hold_mode);
         if (c == current)
             draw_border(c, 1);
     } else if (a == wm_colormaps) {
@@ -893,12 +916,12 @@ XEvent *e;
             return;
         }
         if (errno != EINTR || !signalled) {
-            perror("9wm: select failed");
+            perror("999: select failed");
             exit(1);
         }
     }
     cleanup();
-    fprintf(stderr, "9wm: exiting on signal\n");
+    fprintf(stderr, "999: exiting on signal\n");
     exit(1);
 }
 

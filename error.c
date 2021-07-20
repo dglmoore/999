@@ -1,4 +1,3 @@
-/* Copyright (c) 1994 David Hogan, see README for licence details */
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/X.h>
@@ -14,7 +13,7 @@ void
 fatal(s)
 char *s;
 {
-    fprintf(stderr, "9wm: ");
+    fprintf(stderr, "999: ");
     perror(s);
     fprintf(stderr, "\n");
     exit(1);
@@ -28,7 +27,7 @@ XErrorEvent *e;
     char msg[80], req[80], number[80];
 
     if (initting && (e->request_code == X_ChangeWindowAttributes) && (e->error_code == BadAccess)) {
-        fprintf(stderr, "9wm: it looks like there's already a window manager running;  9wm not started\n");
+        fprintf(stderr, "999: it looks like there's already a window manager running;  999 not started\n");
         exit(1);
     }
 
@@ -39,10 +38,10 @@ XErrorEvent *e;
     sprintf(number, "%d", e->request_code);
     XGetErrorDatabaseText(d, "XRequest", number, "<unknown>", req, sizeof(req));
 
-    fprintf(stderr, "9wm: %s(0x%x): %s\n", req, (unsigned int)e->resourceid, msg);
+    fprintf(stderr, "999: %s(0x%x): %s\n", req, (unsigned int)e->resourceid, msg);
 
     if (initting) {
-        fprintf(stderr, "9wm: failure during initialisation; aborting\n");
+        fprintf(stderr, "999: failure during initialisation; aborting\n");
         exit(1);
     }
     return 0;
@@ -71,10 +70,10 @@ int err;
     case GrabSuccess:
         return;
     default:
-        fprintf(stderr, "9wm: %s: grab error: %d\n", f, err);
+        fprintf(stderr, "999: %s: grab error: %d\n", f, err);
         return;
     }
-    fprintf(stderr, "9wm: %s: grab error: %s\n", f, s);
+    fprintf(stderr, "999: %s: grab error: %s\n", f, s);
 }
 
 void

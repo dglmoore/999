@@ -1,5 +1,4 @@
-/* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
-/* 9wm.c */
+/* 999.c */
 void    sendcmessage();
 Time    timestamp();
 void    sendconfig();

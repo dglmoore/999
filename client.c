@@ -1,4 +1,3 @@
-/* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu see README for licence details */
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -43,6 +42,8 @@ int on;
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_Return), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_m), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_r), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_q), Mod1Mask|ShiftMask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_q), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
         }
 
         if (c->proto & Ptakefocus)
@@ -100,7 +101,7 @@ Client *c;
     Client *cc;
 
     if (c == 0) {
-        fprintf(stderr, "9wm: active(c==0)\n");
+        fprintf(stderr, "999: active(c==0)\n");
         return;
     }
     if (c == current)

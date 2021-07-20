@@ -1,5 +1,3 @@
-/* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
-
 #define BORDER      _border
 #define MAXHIDDEN   32
 #define B3FIXED     5
@@ -73,7 +71,7 @@ struct Menu {
     int lasthit;
 };
 
-/* 9wm.c */
+/* 999.c */
 extern Display      *dpy;
 extern int          screen;
 extern Window       root;
@@ -83,10 +81,10 @@ extern int          initting;
 extern GC           gc;
 extern XFontStruct  *font;
 extern int          nostalgia;
-extern Atom	    exit_9wm;
-extern Atom	    restart_9wm;
+extern Atom	    exit_999;
+extern Atom	    restart_999;
 extern Atom         wm_state;
-extern Atom         _9wm_hold_mode;
+extern Atom         _999_hold_mode;
 extern Atom         wm_protocols;
 extern Atom         wm_delete;
 extern Atom         wm_take_focus;

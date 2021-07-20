@@ -1,4 +1,3 @@
-/* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -15,6 +14,7 @@ Client  *hiddenc[MAXHIDDEN];
 int numhidden;
 int virtual = 0;
 extern int numvirtuals;
+extern FILE *barhandle;
 
 Client * currents[NUMVIRTUALS] = {
     NULL, NULL, NULL, NULL,
@@ -193,6 +193,8 @@ int n;
         return;
     else if (n >= numvirtuals)
         return;
+    fprintf(stdout, "[%d]\n", virtual + 1);
+    fprintf(barhandle, "[%d]\n", virtual + 1);
     currents[virtual] = current;
     virtual = n;
     switch_to_c(n,clients);
@@ -247,12 +249,12 @@ spawn() {
             close(ConnectionNumber(dpy));
             if (termprog != NULL) {
                 execl(shell, shell, "-c", termprog, 0);
-                fprintf(stderr, "9wm: exec %s", shell);
+                fprintf(stderr, "999: exec %s", shell);
                 perror(" failed");
             }
             execlp("xterm", "xterm", "-ut", 0);
-            execlp("9term", "9term", "-9wm", 0);
-            perror("9wm: exec 9term/xterm failed");
+            execlp("9term", "9term", "-999", 0);
+            perror("999: exec 9term/xterm failed");
             exit(1);
         }
         exit(0);
@@ -316,7 +318,7 @@ Client *c;
     if (c == 0 || numhidden == MAXHIDDEN)
         return;
     if (hidden(c)) {
-        fprintf(stderr, "9wm: already hidden: %s\n", c->label);
+        fprintf(stderr, "999: already hidden: %s\n", c->label);
         return;
     }
     XUnmapWindow(dpy, c->parent);
@@ -339,12 +341,12 @@ int map;
     int i;
 
     if (n >= numhidden) {
-        fprintf(stderr, "9wm: unhide: n %d numhidden %d\n", n, numhidden);
+        fprintf(stderr, "999: unhide: n %d numhidden %d\n", n, numhidden);
         return;
     }
     c = hiddenc[n];
     if (!hidden(c)) {
-        fprintf(stderr, "9wm: unhide: not hidden: %s(0x%lx)\n",
+        fprintf(stderr, "999: unhide: not hidden: %s(0x%lx)\n",
                 c->label, c->window);
         return;
     }
@@ -377,7 +379,7 @@ int map;
             unhide(i, map);
             return;
         }
-    fprintf(stderr, "9wm: unhidec: not hidden: %s(0x%lx)\n",
+    fprintf(stderr, "999: unhidec: not hidden: %s(0x%lx)\n",
             c->label, c->window);
 }
 
