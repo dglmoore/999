@@ -85,7 +85,7 @@ XButtonEvent *e;
             active(c);
             if (click_passes)
                 XAllowEvents (dpy, ReplayPointer, curtime);
-        } else if ((e->state&(ShiftMask|ControlMask))==(ShiftMask|ControlMask)
+        } else if ((e->state&(ShiftMask|Mod1Mask))==(ShiftMask|Mod1Mask)
                    && progsnames[0] != NULL) {
             int n;
             if ((n = menuhit(e, &progs)) != -1) {
@@ -107,7 +107,7 @@ XButtonEvent *e;
             active(c);
             XAllowEvents (dpy, ReplayPointer, curtime);
         } else {
-            if ((e->state&(ShiftMask|ControlMask))==(ShiftMask|ControlMask))
+            if ((e->state&(ShiftMask|Mod1Mask))==(ShiftMask|Mod1Mask))
                 menuhit(e, &egg);
             else
                 button2(e);

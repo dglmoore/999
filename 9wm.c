@@ -15,6 +15,7 @@
 #include <X11/keysym.h>
 #include <pwd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 char    *version[] = {
     "9wm version 1.1, Copyright (c) 1994 David Hogan",
@@ -69,6 +70,10 @@ char    *fontlist[] = {
     "fixed",
     0,
 };
+
+unsigned long int getKeysym(XEvent *ev) {
+    return XLookupKeysym(&(ev->xkey), 0);
+}
 
 int isdigitkey(unsigned int x) {
     switch(x) {
@@ -292,18 +297,27 @@ char    *argv[];
             break;
         case KeyPress:
             if (use_keys) {
-                unsigned long int k = XLookupKeysym(&(ev.xkey),0);
-                if (XLookupKeysym(&(ev.xkey),0) == XK_Tab && (ev.xkey.state & ControlMask)) {
+                if (getKeysym(&ev) == XK_Tab && (ev.xkey.state & Mod1Mask)) {
                     if (ev.xkey.state & ShiftMask) {
                         activateprevious();
                     } else {
                         activatenext();
                     }
-                } else if (isdigitkey(XLookupKeysym(&(ev.xkey),0)) && (ev.xkey.state & Mod1Mask)) {
+                } else if (isdigitkey(getKeysym(&ev)) && (ev.xkey.state & Mod1Mask)) {
                     switch_to(isdigitkey(XLookupKeysym(&(ev.xkey),0)) - 1);
                     if (current) {
                         cmapfocus(current);
                     }
+                } else if (getKeysym(&ev) == XK_p && (ev.xkey.state & Mod1Mask)) {
+                    if (fork() == 0) {
+                        if (fork() == 0) {
+                            close(ConnectionNumber(dpy));
+                            execlp("dmenu_run", "dmenu_run", 0);
+                            exit(1);
+                        }
+                        exit(0);
+                    }
+                    wait((int*)0);
                 } else if (current) {
                     ev.xkey.window = current->window;
                     XSendEvent(dpy, current->window, False, NoEventMask, &ev);

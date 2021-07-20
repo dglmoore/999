@@ -12,6 +12,10 @@
 Client      *clients;
 Client      *current = NULL;	/* paranoid */
 
+unsigned long int workspacekeys[9] = {
+    XK_1, XK_2, XK_3, XK_4, XK_5, XK_6, XK_7, XK_8, XK_9
+};
+
 void
 setactive(c, on)
 Client *c;
@@ -24,21 +28,18 @@ int on;
         if (use_keys) {
             XGrabKey(dpy,
                      XKeysymToKeycode(dpy, XK_Tab),
-                     ControlMask,
+                     Mod1Mask,
                      root, False, GrabModeAsync, GrabModeAsync);
             XGrabKey(dpy,
                      XKeysymToKeycode(dpy, XK_Tab),
-                     ControlMask|ShiftMask,
+                     Mod1Mask|ShiftMask,
                      root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_1), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_2), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_3), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_4), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_5), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_6), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_7), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_8), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
-            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_9), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+
+            for (int i = 0; i < 9; ++i) {
+                XGrabKey(dpy, XKeysymToKeycode(dpy, workspacekeys[i]), Mod1Mask,
+                         root, False, GrabModeAsync, GrabModeAsync);
+            }
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_p), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
         }
 
         if (c->proto & Ptakefocus)
