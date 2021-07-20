@@ -1,5 +1,6 @@
 /* Copyright (c) 1994 David Hogan, see README for licence details */
 #include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <errno.h>
 #include <X11/X.h>
@@ -11,7 +12,6 @@
 #include "dat.h"
 #include "fns.h"
 #include "patchlevel.h"
-#include <stdlib.h>
 #include <X11/keysym.h>
 #include <pwd.h>
 #include <sys/types.h>

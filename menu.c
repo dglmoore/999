@@ -1,6 +1,6 @@
 /* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>

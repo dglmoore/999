@@ -1,6 +1,7 @@
 /* Copyright (c) 1994 David Hogan, 2000 Benjamin Drieu, see README for licence details */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -380,7 +381,7 @@ Atom a;
     return (char *)p;
 }
 
-int
+int64_t
 get1prop(w, a, type)
 Window w;
 Atom a;
@@ -392,7 +393,7 @@ Atom type;
         return 0;
     x = *p;
     XFree((void*) p);
-    return (int)x;
+    return (int64_t)x;
 }
 
 Window
