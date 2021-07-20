@@ -24,13 +24,13 @@ HFILES = dat.h fns.h
 # Or these rules either
 #
 
-all: w9wm
+all: 999
 
-w9wm: $(OBJS)
-	$(CC) $(CFLAGS) -o w9wm $(OBJS) $(LDFLAGS)
+999: $(OBJS)
+	$(CC) $(CFLAGS) -o 999 $(OBJS) $(LDFLAGS)
 
-install: w9wm
-	cp w9wm $(BIN)/w9wm
+install: 999
+	cp 999 $(BIN)/999
 
 install.man:
 	cp 9wm.man $(MANDIR)/9wm.$(MANSUFFIX)
@@ -44,4 +44,4 @@ vu: trout
 	xditview trout
 
 clean:
-	rm -f w9wm *.o core bun trout
+	rm -f 999 *.o core bun trout

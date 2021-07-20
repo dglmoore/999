@@ -1,13 +1,13 @@
-			  w9wm Version 0.4.0
+			  999 Version 0.4.0
 		 Copyright 2000-2001 Benjamin Drieu.
 
 		     with large portions of code
 		     Copyright 1994 David Hogan.
 
-What is w9wm ?
+What is 999 ?
 ==============
 
-w9wm is a quick & dirty hack based on 9wm, the wonderful "template"
+999 is a quick & dirty hack based on 9wm, the wonderful "template"
 window manager made by David Hogan.
 
 9wm is really nice for all day use (I mean, a large Emacs window
@@ -17,12 +17,12 @@ your screen.  But in some occasions it is not the case (ie. you have
 to telnet to 4-5 remote machines), which is painful with 9wm.
 
 This need for virtual screens motivated this about 50 lines hack.
-w9wm brings support for virtual screens (provided you use the second
+999 brings support for virtual screens (provided you use the second
 button, aka middle button to select one virtual screen) as well as for
 key bindings (to switch from one window to another).
 
 
-What is w9wm not?
+What is 999 not?
 ================
 
 A configurable kitchen sink.  If you want to modify virtual screens
@@ -33,7 +33,7 @@ Where do I get it?
 ==================
 
 It depends.  If you are lucky you might fetch it from
-http://inferno.cs.univ-paris8.fr/~drieu/w9wm/.  Otherwise, please drop
+http://inferno.cs.univ-paris8.fr/~drieu/999/.  Otherwise, please drop
 a letter to bdrieu@april.org
 
 Some distributions might provide packages (there is a port for
@@ -47,14 +47,14 @@ Author
 student at the Basser Department of Computer Science, University
 of Sydney (http://www.cs.su.oz.au/basser_home.html).
 
-w9wm was written by Benjamin Drieu (bdrieu@april.org) at University of
+999 was written by Benjamin Drieu (bdrieu@april.org) at University of
 Paris 8 (http://www.cs.univ-paris8.fr/).
 
 
 Licence
 =======
 
-w9wm is free software and uses the same licence than 9wm.  Look at the
+999 is free software and uses the same licence than 9wm.  Look at the
 README.9wm file included in this distribution to read it.
 
 

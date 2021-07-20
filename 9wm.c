@@ -19,7 +19,7 @@
 
 char    *version[] = {
     "9wm version 1.1, Copyright (c) 1994 David Hogan",
-    "w9wm version 0.4.2, Copyright (c) 2000-2003 Benjamin Drieu", 0,
+    "999 version 0.4.2, Copyright (c) 2000-2003 Benjamin Drieu", 0,
 };
 
 Display         *dpy;
@@ -439,7 +439,7 @@ activatenext() {
 
 void
 usage() {
-    fprintf(stderr, "usage: w9wm [[-display|-dpy] dpy] [-grey] [-version] [-font fname] [-pass]\n"
+    fprintf(stderr, "usage: 999 [[-display|-dpy] dpy] [-grey] [-version] [-font fname] [-pass]\n"
             "       [-nokeys] [-debug] [-nostalgia] [-term prog] [-pass] [-virtuals n]\n"
             "       [exit|restart]\n");
     exit(1);
@@ -906,7 +906,7 @@ parseprogsfile () {
     char * buffer;
 
     buffer = (char *) malloc (1024);
-    snprintf (buffer, 1024, "%s/.w9wmrc", p->pw_dir);
+    snprintf (buffer, 1024, "%s/.999rc", p->pw_dir);
 
     file = fopen (buffer, "r");
     if (! file) {
