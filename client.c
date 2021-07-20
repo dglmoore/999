@@ -31,6 +31,15 @@ int on;
 		     XKeysymToKeycode(dpy, XK_Tab),
 		     ControlMask|ShiftMask, 
 		     root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_1), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_2), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_3), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_4), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_5), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_6), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_7), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_8), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+	    XGrabKey(dpy, XKeysymToKeycode(dpy, XK_9), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
 	  }
 
         if (c->proto & Ptakefocus)

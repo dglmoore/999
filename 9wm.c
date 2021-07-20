@@ -71,11 +71,29 @@ char    *fontlist[] = {
     0,
 };
 
-int
+int isdigitkey(unsigned int x) {
+    switch(x) {
+        case XK_1:
+        case XK_2:
+        case XK_3:
+        case XK_4:
+        case XK_5:
+        case XK_6:
+        case XK_7:
+        case XK_8:
+        case XK_9:
+            return (int)(x - XK_0);
+        default:
+            return 0;
+    }
+}
+
+    int
 main(argc, argv)
-int argc;
-char    *argv[];
+    int argc;
+    char    *argv[];
 {
+    printf("Starting up...\n");
     int i, background, do_exit, do_restart, dummy;
     unsigned long mask;
     XEvent ev;
@@ -94,19 +112,19 @@ char    *argv[];
         else if (strcmp(argv[i], "-debug") == 0)
             debug++;
         else if ((strcmp(argv[i], "-display") == 0 || strcmp(argv[i], "-dpy") == 0 ) 
-		 && i+1<argc)
-	  {
+                && i+1<argc)
+        {
             display = argv[++i];
-	    setenv("DISPLAY", display, 1);
-	  }
+            setenv("DISPLAY", display, 1);
+        }
         else if (strcmp(argv[i], "-pass") == 0)
-	  {
-	    click_passes = 1;
-	  }
+        {
+            click_passes = 1;
+        }
         else if (strcmp(argv[i], "-nokeys") == 0)
-	  {
-	    use_keys = 0;
-	  }
+        {
+            use_keys = 0;
+        }
         else if (strcmp(argv[i], "-font") == 0 && i+1<argc) {
             i++;
             fname = argv[i];
@@ -123,13 +141,13 @@ char    *argv[];
             exit(0);
         }
         else if (strcmp(argv[i], "-virtuals") == 0 && i+1<argc)
-	  {
-	    int n = atoi(argv[++i]);
-	    if (n > 0 && n <= 12)
-	      numvirtuals = n;
-	    else
-	      fprintf(stderr, "9wm: wrong number of virtual screens, must be between 1 and 12\n");
-	  }
+        {
+            int n = atoi(argv[++i]);
+            if (n > 0 && n <= 12)
+                numvirtuals = n;
+            else
+                fprintf(stderr, "9wm: wrong number of virtual screens, must be between 1 and 12\n");
+        }
         else if (argv[i][0] == '-')
             usage();
         else
@@ -233,10 +251,10 @@ char    *argv[];
 
     attr.cursor = arrow;
     attr.event_mask = SubstructureRedirectMask
-      | SubstructureNotifyMask | ColormapChangeMask
-      | ButtonPressMask | ButtonReleaseMask
-      | PropertyChangeMask | StructureNotifyMask
-      | (use_keys ? KeyPressMask : 0) ;
+        | SubstructureNotifyMask | ColormapChangeMask
+        | ButtonPressMask | ButtonReleaseMask
+        | PropertyChangeMask | StructureNotifyMask
+        | (use_keys ? KeyPressMask : 0) ;
     mask = CWCursor|CWEventMask;
     XChangeWindowAttributes(dpy, root, mask, &attr);
     XSync(dpy, False);
@@ -269,171 +287,173 @@ char    *argv[];
         }
 #endif
         switch (ev.type) {
-        default:
+            default:
 #ifdef  SHAPE
-            if (shape && ev.type == shape_event)
-                shapenotify((XShapeEvent *)&ev);
-            else
+                if (shape && ev.type == shape_event)
+                    shapenotify((XShapeEvent *)&ev);
+                else
 #endif
-                fprintf(stderr, "9wm: unknown ev.type %d\n", ev.type);
-            break;
-	case KeyRelease:
-	  if (use_keys && current)
-	    {
-	      ev.xkey.window = current->window;
-	      XSendEvent(dpy, current->window, False, NoEventMask, &ev);
-	    }
-	  break;
-	case KeyPress:
-	  if (use_keys)
-	    {
-	      if (XLookupKeysym(&(ev.xkey),0) == XK_Tab && 
-		  (ev.xkey.state & ControlMask))
-		{
-		  if (ev.xkey.state & ShiftMask)
-		    activateprevious();
-		  else
-		    activatenext();		      
-		}
-	      else if (current)
-		{
-		  ev.xkey.window = current->window;
-		  XSendEvent(dpy, current->window, False, NoEventMask, &ev);
-		}
-	    }
-	  break;
-        case ButtonPress:
-            button(&ev.xbutton);
-	    /*  option */
-	    {
-	      XAllowEvents (dpy, SyncPointer, ev.xbutton.time);
-	    }
-            break;
-        case ButtonRelease:
-            break;
-        case MapRequest:
-            mapreq(&ev.xmaprequest);
-            break;
-        case ConfigureRequest:
-	  configurereq(&ev.xconfigurerequest);
-	  break;
-        case CirculateRequest:
-            circulatereq(&ev.xcirculaterequest);
-            break;
-        case UnmapNotify:
-            unmap(&ev.xunmap);
-            break;
-        case CreateNotify:
-            newwindow(&ev.xcreatewindow);
-            break;
-        case DestroyNotify:
-            destroy(ev.xdestroywindow.window);
-            break;
-        case ClientMessage:
-            clientmesg(&ev.xclient);
-            break;
-        case ColormapNotify:
-            cmap(&ev.xcolormap);
-            break;
-        case PropertyNotify:
-            property(&ev.xproperty);
-            break;
-        case SelectionClear:
-            fprintf(stderr, "9wm: SelectionClear (this should not happen)\n");
-            break;
-        case SelectionNotify:
-            fprintf(stderr, "9wm: SelectionNotify (this should not happen)\n");
-            break;
-        case SelectionRequest:
-            fprintf(stderr, "9wm: SelectionRequest (this should not happen)\n");
-            break;
-        case EnterNotify:
-            enter(&ev.xcrossing);
-            break;
-        case ReparentNotify:
-            reparent(&ev.xreparent);
-            break;
-        case MotionNotify:
-        case Expose:
-        case FocusIn:
-        case FocusOut:
-        case ConfigureNotify:
-        case MappingNotify:
-        case MapNotify:
-            /* not interested */
-            break;
+                    fprintf(stderr, "9wm: unknown ev.type %d\n", ev.type);
+                break;
+            case KeyRelease:
+                if (use_keys && current)
+                {
+                    ev.xkey.window = current->window;
+                    XSendEvent(dpy, current->window, False, NoEventMask, &ev);
+                }
+                break;
+            case KeyPress:
+                if (use_keys) {
+		    unsigned long int k = XLookupKeysym(&(ev.xkey),0);
+                    if (XLookupKeysym(&(ev.xkey),0) == XK_Tab && (ev.xkey.state & ControlMask)) {
+                        if (ev.xkey.state & ShiftMask) {
+                            activateprevious();
+                        } else {
+                            activatenext();		      
+                        }
+                    } else if (isdigitkey(XLookupKeysym(&(ev.xkey),0)) && (ev.xkey.state & Mod1Mask)) {
+                        switch_to(isdigitkey(XLookupKeysym(&(ev.xkey),0)) - 1);
+                        if (current) {
+                            cmapfocus(current);
+                        }
+                    } else if (current) {
+                        ev.xkey.window = current->window;
+                        XSendEvent(dpy, current->window, False, NoEventMask, &ev);
+                    }
+                }
+                break;
+            case ButtonPress:
+                button(&ev.xbutton);
+                /*  option */
+                {
+                    XAllowEvents (dpy, SyncPointer, ev.xbutton.time);
+                }
+                break;
+            case ButtonRelease:
+                break;
+            case MapRequest:
+                mapreq(&ev.xmaprequest);
+                break;
+            case ConfigureRequest:
+                configurereq(&ev.xconfigurerequest);
+                break;
+            case CirculateRequest:
+                circulatereq(&ev.xcirculaterequest);
+                break;
+            case UnmapNotify:
+                unmap(&ev.xunmap);
+                break;
+            case CreateNotify:
+                newwindow(&ev.xcreatewindow);
+                break;
+            case DestroyNotify:
+                destroy(ev.xdestroywindow.window);
+                break;
+            case ClientMessage:
+                clientmesg(&ev.xclient);
+                break;
+            case ColormapNotify:
+                cmap(&ev.xcolormap);
+                break;
+            case PropertyNotify:
+                property(&ev.xproperty);
+                break;
+            case SelectionClear:
+                fprintf(stderr, "9wm: SelectionClear (this should not happen)\n");
+                break;
+            case SelectionNotify:
+                fprintf(stderr, "9wm: SelectionNotify (this should not happen)\n");
+                break;
+            case SelectionRequest:
+                fprintf(stderr, "9wm: SelectionRequest (this should not happen)\n");
+                break;
+            case EnterNotify:
+                enter(&ev.xcrossing);
+                break;
+            case ReparentNotify:
+                reparent(&ev.xreparent);
+                break;
+            case MotionNotify:
+            case Expose:
+            case FocusIn:
+            case FocusOut:
+            case ConfigureNotify:
+            case MappingNotify:
+            case MapNotify:
+                /* not interested */
+                break;
         }
     }
 }
 
-void
+    void
 activateprevious()
 {
-  Client * c, * tmp = NULL;
+    Client * c, * tmp = NULL;
 
-  if (!current)
-    current = clients;
+    if (!current)
+        current = clients;
 
-  if (!clients || !current)
-    return;
+    if (!clients || !current)
+        return;
 
-  for (c = clients; c->next; c=c->next)
+    for (c = clients; c->next; c=c->next)
     {
-      if (c->virtual == virtual &&
-	  c->state == NormalState)
-	tmp = c;
-      if (tmp && 
-	  c->next == current)
-	break;
+        if (c->virtual == virtual &&
+                c->state == NormalState)
+            tmp = c;
+        if (tmp && 
+                c->next == current)
+            break;
     }
 
-  if (tmp && 
-      tmp->state == NormalState && 
-      tmp->parent != root)	/* paranoid */
+    if (tmp && 
+            tmp->state == NormalState && 
+            tmp->parent != root)	/* paranoid */
     {
-      active(tmp);
-      XMapRaised(dpy, tmp->parent);
-      return;
+        active(tmp);
+        XMapRaised(dpy, tmp->parent);
+        return;
     }
 }
 
-void
+    void
 activatenext()
 {
-  Client * c;
+    Client * c;
 
-  if (!current)
-    current = clients;
+    if (!current)
+        current = clients;
 
-  if (!clients || !current)
-    return;
+    if (!clients || !current)
+        return;
 
-  for (c=current->next; c != current; c = ((c && c->next) ? c->next : clients))
-    if (c &&
-	c->state == NormalState && 
-	c->virtual == virtual && 
-	c->parent != root)	/* paranoid */
-      {
-	active(c);
-	XMapRaised(dpy, c->parent);
-	return;
-      }
+    for (c=current->next; c != current; c = ((c && c->next) ? c->next : clients))
+        if (c &&
+                c->state == NormalState && 
+                c->virtual == virtual && 
+                c->parent != root)	/* paranoid */
+        {
+            active(c);
+            XMapRaised(dpy, c->parent);
+            return;
+        }
 }
 
-void
+    void
 usage()
 {
     fprintf(stderr, "usage: w9wm [[-display|-dpy] dpy] [-grey] [-version] [-font fname] [-pass]\n"
-"       [-nokeys] [-debug] [-nostalgia] [-term prog] [-pass] [-virtuals n]\n"
-"       [exit|restart]\n");
+            "       [-nokeys] [-debug] [-nostalgia] [-term prog] [-pass] [-virtuals n]\n"
+            "       [exit|restart]\n");
     exit(1);
 }
 
-void
+    void
 sendcmessage(w, a, x)
-Window w;
-Atom a;
-long x;
+    Window w;
+    Atom a;
+    long x;
 {
     XEvent ev;
     int status;
@@ -454,7 +474,7 @@ long x;
         fprintf(stderr, "9wm: sendcmessage failed\n");
 }
 
-Time
+    Time
 timestamp()
 {
     XEvent ev;
@@ -468,9 +488,9 @@ timestamp()
     return curtime;
 }
 
-void
+    void
 sendconfig(c)
-Client *c;
+    Client *c;
 {
     XConfigureEvent ce;
 
@@ -487,7 +507,7 @@ Client *c;
     XSendEvent(dpy, c->window, False, StructureNotifyMask, (XEvent*)&ce);
 }
 
-void
+    void
 scanwins()
 {
     unsigned int i, nwins;
@@ -514,12 +534,12 @@ scanwins()
     XFree((void *) wins);   /* cast is to shut stoopid compiler up */
 }
 
-void
+    void
 configurereq(e)
-XConfigureRequestEvent *e;
+    XConfigureRequestEvent *e;
 {
     XWindowChanges wc;
-/*      XConfigureEvent ce; */
+    /*      XConfigureEvent ce; */
     Client *c;
 
     /* we don't set curtime as nothing here uses it */
@@ -532,15 +552,15 @@ XConfigureRequestEvent *e;
         if (e->value_mask & CWY)
             c->y = e->y;
         if (e->value_mask & CWWidth)
-	  {
+        {
             c->dx = e->width;
-	    XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1)); 
-	  }
+            XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1)); 
+        }
         if (e->value_mask & CWHeight)
-	  {
+        {
             c->dy = e->height;
-	    XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1)); 
-	  }
+            XResizeWindow(dpy, c->parent, c->dx+2*(BORDER-1), c->dy+2*(BORDER-1)); 
+        }
         if (e->value_mask & CWBorderWidth)
             c->border = e->border_width;
         gravitate(c, 0);
@@ -575,9 +595,9 @@ XConfigureRequestEvent *e;
     XConfigureWindow(dpy, e->window, e->value_mask, &wc);
 }
 
-void
+    void
 mapreq(e)
-XMapRequestEvent *e;
+    XMapRequestEvent *e;
 {
     Client *c;
 
@@ -589,31 +609,31 @@ XMapRequestEvent *e;
     }
 
     switch (c->state) {
-    case WithdrawnState:
-        if (c->parent == root) {
-            if (!manage(c, 0))
-                return;
+        case WithdrawnState:
+            if (c->parent == root) {
+                if (!manage(c, 0))
+                    return;
+                break;
+            }
+            XReparentWindow(dpy, c->window, c->parent, BORDER-1, BORDER-1);
+            XAddToSaveSet(dpy, c->window);
+            /* fall through... */
+        case NormalState:
+            XMapRaised(dpy, c->parent);
+            XMapWindow(dpy, c->window);
+            setstate9(c, NormalState);
+            //        if (c->trans != None && current && c->trans == current->window)
+            active(c);
             break;
-        }
-        XReparentWindow(dpy, c->window, c->parent, BORDER-1, BORDER-1);
-        XAddToSaveSet(dpy, c->window);
-        /* fall through... */
-    case NormalState:
-        XMapRaised(dpy, c->parent);
-        XMapWindow(dpy, c->window);
-        setstate9(c, NormalState);
-	//        if (c->trans != None && current && c->trans == current->window)
-                active(c);
-        break;
-    case IconicState:
-        unhidec(c, 1);
-        break;
+        case IconicState:
+            unhidec(c, 1);
+            break;
     }
 }
 
-void
+    void
 unmap(e)
-XUnmapEvent *e;
+    XUnmapEvent *e;
 {
     Client *c;
 
@@ -621,35 +641,35 @@ XUnmapEvent *e;
     c = getclient(e->window, 0);
     if (c) {
         switch (c->state) {
-        case IconicState:
-            if (e->send_event) {
-                unhidec(c, 0);
-                withdraw(c);
-            }
-            break;
-        case NormalState:
-            if (c == current)
-                nofocus();
-            if (!c->reparenting)
-	      {
-                withdraw(c);
-	      }
-            break;
+            case IconicState:
+                if (e->send_event) {
+                    unhidec(c, 0);
+                    withdraw(c);
+                }
+                break;
+            case NormalState:
+                if (c == current)
+                    nofocus();
+                if (!c->reparenting)
+                {
+                    withdraw(c);
+                }
+                break;
         }
         c->reparenting = 0;
     }
 }
 
-void
+    void
 circulatereq(e)
-XCirculateRequestEvent *e;
+    XCirculateRequestEvent *e;
 {
     fprintf(stderr, "It must be the warlock Krill!\n");  /* :-) */
 }
 
-void
+    void
 newwindow(e)
-XCreateWindowEvent *e;
+    XCreateWindowEvent *e;
 {
     Client *c;
 
@@ -666,9 +686,9 @@ XCreateWindowEvent *e;
     }
 }
 
-void
+    void
 destroy(w)
-Window w;
+    Window w;
 {
     Client *c;
 
@@ -685,9 +705,9 @@ Window w;
     ignore_badwindow = 0;
 }
 
-void
+    void
 clientmesg(e)
-XClientMessageEvent *e;
+    XClientMessageEvent *e;
 {
     Client *c;
 
@@ -711,16 +731,16 @@ XClientMessageEvent *e;
         }
         else
             fprintf(stderr, "9wm: WM_CHANGE_STATE: format %d data %d w 0p%p\n",
-                e->format, (int)e->data.l[0], (void*)e->window);
+                    e->format, (int)e->data.l[0], (void*)e->window);
         return;
     }
     fprintf(stderr, "9wm: strange ClientMessage, type 0x%x window 0x%x\n",
-        (int)e->message_type, (int)e->window);
+            (int)e->message_type, (int)e->window);
 }
 
-void
+    void
 cmap(e)
-XColormapEvent *e;
+    XColormapEvent *e;
 {
     Client *c;
     int i;
@@ -745,9 +765,9 @@ XColormapEvent *e;
     }
 }
 
-void
+    void
 property(e)
-XPropertyEvent *e;
+    XPropertyEvent *e;
 {
     Atom a;
     int delete;
@@ -761,23 +781,23 @@ XPropertyEvent *e;
         return;
 
     switch (a) {
-    case XA_WM_ICON_NAME:
-        if (c->iconname != 0)
-            XFree((char*) c->iconname);
-        c->iconname = getprop(c->window, XA_WM_ICON_NAME);
-        setlabel(c);
-        renamec(c, c->label);
-        return;
-    case XA_WM_NAME:
-        if (c->name != 0)
-            XFree((char*) c->name);
-        c->name = getprop(c->window, XA_WM_NAME);
-        setlabel(c);
-        renamec(c, c->label);
-        return;
-    case XA_WM_TRANSIENT_FOR:
-        gettrans(c);
-        return;
+        case XA_WM_ICON_NAME:
+            if (c->iconname != 0)
+                XFree((char*) c->iconname);
+            c->iconname = getprop(c->window, XA_WM_ICON_NAME);
+            setlabel(c);
+            renamec(c, c->label);
+            return;
+        case XA_WM_NAME:
+            if (c->name != 0)
+                XFree((char*) c->name);
+            c->name = getprop(c->window, XA_WM_NAME);
+            setlabel(c);
+            renamec(c, c->label);
+            return;
+        case XA_WM_TRANSIENT_FOR:
+            gettrans(c);
+            return;
     }
     if (a == _9wm_hold_mode) {
         c->hold = getiprop(c->window, _9wm_hold_mode);
@@ -791,9 +811,9 @@ XPropertyEvent *e;
     }
 }
 
-void
+    void
 reparent(e)
-XReparentEvent *e;
+    XReparentEvent *e;
 {
     Client *c;
     XWindowAttributes attr;
@@ -819,9 +839,9 @@ XReparentEvent *e;
 }
 
 #ifdef  SHAPE
-void
+    void
 shapenotify(e)
-XShapeEvent *e;
+    XShapeEvent *e;
 {
     Client *c;
 
@@ -833,9 +853,9 @@ XShapeEvent *e;
 }
 #endif
 
-void
+    void
 enter(e)
-XCrossingEvent *e;
+    XCrossingEvent *e;
 {
     Client *c;
 
@@ -849,15 +869,15 @@ XCrossingEvent *e;
     }
 }
 
-void
+    void
 sighandler()
 {
     signalled = 1;
 }
 
-void
+    void
 getevent(e)
-XEvent *e;
+    XEvent *e;
 {
     int fd;
     fd_set rfds;
@@ -893,37 +913,37 @@ XEvent *e;
 }
 
 
-void
+    void
 parseprogsfile ()
 {
-  FILE *file;
-  int i;
-  struct passwd * p = getpwuid(getuid());
-  char * buffer;
+    FILE *file;
+    int i;
+    struct passwd * p = getpwuid(getuid());
+    char * buffer;
 
-  buffer = (char *) malloc (1024);
-  snprintf (buffer, 1024, "%s/.w9wmrc", p->pw_dir);
+    buffer = (char *) malloc (1024);
+    snprintf (buffer, 1024, "%s/.w9wmrc", p->pw_dir);
 
-  file = fopen (buffer, "r");
-  if (! file)
+    file = fopen (buffer, "r");
+    if (! file)
     {
-      fprintf (stderr, "cannot open %s\n", buffer);
-      progsnames[0] = NULL;
-      return;
+        fprintf (stderr, "cannot open %s\n", buffer);
+        progsnames[0] = NULL;
+        return;
     }
 
-  for (i = 0; i<16 && ! feof(file); i++)
+    for (i = 0; i<16 && ! feof(file); i++)
     {
-      buffer = (char *) malloc (1024);
-      if (! fgets(buffer, 1024, file))
-	break;
-      if (buffer[strlen(buffer)-1] == '\n')
-	buffer[strlen(buffer)-1] = 0;
-      progsnames[i] = buffer;
+        buffer = (char *) malloc (1024);
+        if (! fgets(buffer, 1024, file))
+            break;
+        if (buffer[strlen(buffer)-1] == '\n')
+            buffer[strlen(buffer)-1] = 0;
+        progsnames[i] = buffer;
     }
 
-  progsnames[i] = NULL;
+    progsnames[i] = NULL;
 
-  fclose (file);
-  return;
+    fclose (file);
+    return;
 }

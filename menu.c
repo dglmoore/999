@@ -14,6 +14,7 @@ Client  *hiddenc[MAXHIDDEN];
 
 int numhidden;
 int virtual = 0;
+extern int numvirtuals;
 
 Client * currents[NUMVIRTUALS] =
 {
@@ -202,6 +203,8 @@ switch_to(n)
 int n;
 {
   if (n == virtual)
+    return;
+  else if (n >= numvirtuals)
     return;
   currents[virtual] = current;
   virtual = n;
