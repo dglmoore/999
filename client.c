@@ -40,6 +40,9 @@ int on;
                          root, False, GrabModeAsync, GrabModeAsync);
             }
             XGrabKey(dpy, XKeysymToKeycode(dpy, XK_p), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_Return), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_m), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
+            XGrabKey(dpy, XKeysymToKeycode(dpy, XK_r), Mod1Mask, root, False, GrabModeAsync, GrabModeAsync);
         }
 
         if (c->proto & Ptakefocus)

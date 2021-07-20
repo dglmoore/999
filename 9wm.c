@@ -97,7 +97,6 @@ main(argc, argv)
 int argc;
 char    *argv[];
 {
-    printf("Starting up...\n");
     int i, background, do_exit, do_restart, dummy;
     unsigned long mask;
     XEvent ev;
@@ -318,6 +317,12 @@ char    *argv[];
                         exit(0);
                     }
                     wait((int*)0);
+                } else if (getKeysym(&ev) == XK_Return && (ev.xkey.state & Mod1Mask)) {
+                   spawn();
+                } else if (getKeysym(&ev) == XK_m && (ev.xkey.state & Mod1Mask)) {
+                   move(current);
+                } else if (getKeysym(&ev) == XK_r && (ev.xkey.state & Mod1Mask)) {
+                   reshape(current);
                 } else if (current) {
                     ev.xkey.window = current->window;
                     XSendEvent(dpy, current->window, False, NoEventMask, &ev);
