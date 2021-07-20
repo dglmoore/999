@@ -16,37 +16,33 @@ int numhidden;
 int virtual = 0;
 extern int numvirtuals;
 
-Client * currents[NUMVIRTUALS] =
-{
-  NULL, NULL, NULL, NULL, 
+Client * currents[NUMVIRTUALS] = {
+    NULL, NULL, NULL, NULL,
 };
 
-char    *b2items[NUMVIRTUALS+1] = 
-{
-  "  One  ",			/* to produce a nicer menu */
-  "Two",
-  "Three",
-  "Four",
-  "Five",
-  "Six",
-  "Seven",
-  "Eight",
-  "Nine",
-  "Ten",
-  "Eleven",
-  "Twelve",
-  0,
+char    *b2items[NUMVIRTUALS+1] = {
+    "  One  ",			/* to produce a nicer menu */
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    0,
 };
 
 
-Menu    b2menu =
-{
+Menu    b2menu = {
     b2items,
 };
 
 
-char    *b3items[B3FIXED+MAXHIDDEN+1] = 
-{
+char    *b3items[B3FIXED+MAXHIDDEN+1] = {
     "New",
     "Reshape",
     "Move",
@@ -55,19 +51,16 @@ char    *b3items[B3FIXED+MAXHIDDEN+1] =
     0,
 };
 
-Menu    b3menu =
-{
+Menu    b3menu = {
     b3items,
 };
 
-Menu    egg =
-{
+Menu    egg = {
     version,
 };
 
-Menu    progs =
-{
-  progsnames,
+Menu    progs = {
+    progsnames,
 };
 
 void
@@ -82,48 +75,43 @@ XButtonEvent *e;
     if (c) {
         e->x += c->x - BORDER + 1;
         e->y += c->y - BORDER + 1;
-    }
-    else if (e->window != root)
+    } else if (e->window != root)
         XTranslateCoordinates(dpy, e->window, root, e->x, e->y,
-                &e->x, &e->y, &dw);
+                              &e->x, &e->y, &dw);
     switch (e->button) {
     case Button1:
         if (c) {
             XMapRaised(dpy, c->parent);
             active(c);
-	    if (click_passes)
-	      XAllowEvents (dpy, ReplayPointer, curtime);
+            if (click_passes)
+                XAllowEvents (dpy, ReplayPointer, curtime);
+        } else if ((e->state&(ShiftMask|ControlMask))==(ShiftMask|ControlMask)
+                   && progsnames[0] != NULL) {
+            int n;
+            if ((n = menuhit(e, &progs)) != -1) {
+                if (fork() == 0) {
+                    if (fork() == 0) {
+                        close(ConnectionNumber(dpy));
+                        execlp(progsnames[n], progsnames[n], 0);
+                        exit(1);
+                    }
+                    exit(0);
+                }
+                wait((int *) 0);
+            }
         }
-	else if ((e->state&(ShiftMask|ControlMask))==(ShiftMask|ControlMask)
-		 && progsnames[0] != NULL)
-	  {
-	    int n;
-	    if ((n = menuhit(e, &progs)) != -1)
-	      {
-		if (fork() == 0) {
-		  if (fork() == 0) {
-		    close(ConnectionNumber(dpy));
-		    execlp(progsnames[n], progsnames[n], 0);
-		    exit(1);
-		  }
-		  exit(0);
-		}
-		wait((int *) 0);
-	      }
-	  }
         return;
     case Button2:
         if (c && click_passes) {
             XMapRaised(dpy, c->parent);
             active(c);
-	    XAllowEvents (dpy, ReplayPointer, curtime);
-        }
-	else {
+            XAllowEvents (dpy, ReplayPointer, curtime);
+        } else {
             if ((e->state&(ShiftMask|ControlMask))==(ShiftMask|ControlMask))
                 menuhit(e, &egg);
-	    else
-	        button2(e);
-	}
+            else
+                button2(e);
+        }
         return;
     default:
         return;
@@ -131,23 +119,22 @@ XButtonEvent *e;
         if (c && click_passes) {
             XMapRaised(dpy, c->parent);
             active(c);
-	    XAllowEvents (dpy, ReplayPointer, curtime);
-        }
-	else
+            XAllowEvents (dpy, ReplayPointer, curtime);
+        } else
             button3(e);
         break;
     }
 }
 
 
-void 
+void
 button2(e)
 XButtonEvent *e;
 {
     int n;
     cmapfocus(0);
     if ((n = menuhit(e, &b2menu)) == -1)
-      return;
+        return;
     switch_to(n);
     if (current)
         cmapfocus(current);
@@ -157,10 +144,10 @@ void
 initb2menu(n)
 int n;
 {
-  b2items[n] = 0;
+    b2items[n] = 0;
 }
 
-void 
+void
 button3(e)
 XButtonEvent *e;
 {
@@ -202,14 +189,14 @@ void
 switch_to(n)
 int n;
 {
-  if (n == virtual)
-    return;
-  else if (n >= numvirtuals)
-    return;
-  currents[virtual] = current;
-  virtual = n;
-  switch_to_c(n,clients);
-  current = currents[virtual];
+    if (n == virtual)
+        return;
+    else if (n >= numvirtuals)
+        return;
+    currents[virtual] = current;
+    virtual = n;
+    switch_to_c(n,clients);
+    current = currents[virtual];
 }
 
 
@@ -218,44 +205,39 @@ switch_to_c(n,c)
 int n;
 Client * c;
 {
-  if (c && c->next)
-    switch_to_c(n,c->next);
+    if (c && c->next)
+        switch_to_c(n,c->next);
 
-  if (c->parent == DefaultRootWindow(dpy))
-    return;
+    if (c->parent == DefaultRootWindow(dpy))
+        return;
 
-  if (c->virtual != virtual && c->state == NormalState)
-    {
-      XUnmapWindow(dpy, c->parent);
-      XUnmapWindow(dpy, c->window);
-      setstate9(c, IconicState);
-      if (c == current)
-	nofocus();
-    }
-  else if (c->virtual == virtual &&  c->state == IconicState)
-    {
-      int i;
+    if (c->virtual != virtual && c->state == NormalState) {
+        XUnmapWindow(dpy, c->parent);
+        XUnmapWindow(dpy, c->window);
+        setstate9(c, IconicState);
+        if (c == current)
+            nofocus();
+    } else if (c->virtual == virtual &&  c->state == IconicState) {
+        int i;
 
-      for (i = 0; i < numhidden; i++)
-	if (c == hiddenc[i]) 
-	  break;
+        for (i = 0; i < numhidden; i++)
+            if (c == hiddenc[i])
+                break;
 
-      if (i == numhidden)
-	{
-	  XMapWindow(dpy, c->window);
-	  XMapWindow(dpy, c->parent);
-	  setstate9(c, NormalState);
-	  if (currents[virtual] == c)
-	    active(c); 
-	}
+        if (i == numhidden) {
+            XMapWindow(dpy, c->window);
+            XMapWindow(dpy, c->parent);
+            setstate9(c, NormalState);
+            if (currents[virtual] == c)
+                active(c);
+        }
     }
 }
 
 
 
 void
-spawn()
-{
+spawn() {
     /*
      * ugly dance to avoid leaving zombies.  Could use SIGCHLD,
      * but it's not very portable, and I'm in a hurry...
@@ -293,7 +275,7 @@ Client *c;
     active(c);
     XRaiseWindow(dpy, c->parent);
     XMoveResizeWindow(dpy, c->parent, c->x-BORDER, c->y-BORDER,
-                    c->dx+2*(BORDER-1), c->dy+2*(BORDER-1));
+                      c->dx+2*(BORDER-1), c->dy+2*(BORDER-1));
     if (c->dx == odx && c->dy == ody)
         sendconfig(c);
     else
@@ -363,7 +345,7 @@ int map;
     c = hiddenc[n];
     if (!hidden(c)) {
         fprintf(stderr, "9wm: unhide: not hidden: %s(0x%lx)\n",
-            c->label, c->window);
+                c->label, c->window);
         return;
     }
 
@@ -389,14 +371,14 @@ Client *c;
 int map;
 {
     int i;
-    
+
     for (i = 0; i < numhidden; i++)
         if (c == hiddenc[i]) {
             unhide(i, map);
             return;
         }
     fprintf(stderr, "9wm: unhidec: not hidden: %s(0x%lx)\n",
-        c->label, c->window);
+            c->label, c->window);
 }
 
 void

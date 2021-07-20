@@ -27,8 +27,7 @@ int mapped;
         c->instance = class.res_name;
         c->class = class.res_class;
         c->is9term = (strcmp(c->class, "9term") == 0);
-    }
-    else {
+    } else {
         c->instance = 0;
         c->class = 0;
         c->is9term = 0;
@@ -72,16 +71,13 @@ int mapped;
     if (c->size.flags & PBaseSize) {
         c->min_dx = c->size.base_width;
         c->min_dy = c->size.base_height;
-    }
-    else if (c->size.flags & PMinSize) {
+    } else if (c->size.flags & PMinSize) {
         c->min_dx = c->size.min_width;
         c->min_dy = c->size.min_height;
-    }
-    else if (c->is9term) {
+    } else if (c->is9term) {
         c->min_dx = 100;
         c->min_dy = 50;
-    }
-    else
+    } else
         c->min_dx = c->min_dy = 0;
 
     if (hints)
@@ -97,14 +93,13 @@ int mapped;
             cmapfocus(current);
             return 0;
         }
-    }
-    else
+    } else
         gravitate(c, 0);
 
     c->parent = XCreateSimpleWindow(dpy, root,
-            c->x - BORDER, c->y - BORDER,
-            c->dx + 2*(BORDER-1), c->dy + 2*(BORDER-1),
-            1, black, white);
+                                    c->x - BORDER, c->y - BORDER,
+                                    c->dx + 2*(BORDER-1), c->dy + 2*(BORDER-1),
+                                    1, black, white);
     XSelectInput(dpy, c->parent, SubstructureRedirectMask | SubstructureNotifyMask);
     if (mapped)
         c->reparenting = 1;
@@ -221,8 +216,8 @@ int invert;
         dy = 2*delta;
         break;
     default:
-	dx = 0;
-	dy = 0;
+        dx = 0;
+        dy = 0;
         fprintf(stderr, "9wm: bad window gravity %d for 0x%x\n", (int)gravity, (int)c->window);
     }
     dx += BORDER;
@@ -236,8 +231,7 @@ int invert;
 }
 
 void
-cleanup()
-{
+cleanup() {
     Client *c;
     XWindowChanges wc;
 
@@ -277,8 +271,7 @@ Client *c;
         }
         if (!found)
             installcmap(c->cmap);
-    }
-    else if (c->trans != None && (cc = getclient(c->trans, 0)) != 0 && cc->ncmapwins != 0)
+    } else if (c->trans != None && (cc = getclient(c->trans, 0)) != 0 && cc->ncmapwins != 0)
         cmapfocus(cc);
     else
         installcmap(c->cmap);
@@ -348,7 +341,7 @@ Client *c;
     rect = XShapeGetRectangles(dpy, c->window, ShapeBounding, &n, &order);
     if (n > 1)
         XShapeCombineShape(dpy, c->parent, ShapeBounding, BORDER-1, BORDER-1,
-            c->window, ShapeBounding, ShapeSet);
+                           c->window, ShapeBounding, ShapeSet);
     XFree((void*)rect);
 }
 #endif
@@ -430,7 +423,7 @@ int state;
 
     c->state = state;
     XChangeProperty(dpy, c->window, wm_state, wm_state, 32,
-        PropModeReplace, (unsigned char *)data, 2);
+                    PropModeReplace, (unsigned char *)data, 2);
 }
 
 int

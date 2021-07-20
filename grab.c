@@ -29,7 +29,7 @@ int t;
     if (t == 0)
         t = timestamp();
     status = XGrabPointer(dpy, w, False, mask,
-        GrabModeAsync, GrabModeAsync, None, curs, t);
+                          GrabModeAsync, GrabModeAsync, None, curs, t);
     return status;
 }
 
@@ -53,7 +53,7 @@ XButtonEvent *e;
 }
 
 
-void 
+void
 draw_text(been_here, wide, high, n, cur, m)
 int * been_here;
 int wide;
@@ -62,25 +62,25 @@ int n;
 int cur;
 Menu * m;
 {
-	int i;
-	int tx, ty;
+    int i;
+    int tx, ty;
 
-	if (*been_here){
-		return;
-	}
+    if (*been_here) {
+        return;
+    }
 
-	*been_here = 1;
+    *been_here = 1;
 
-	for (i=0; i<n; i++){
-		tx = (wide - XTextWidth(font, m->item[i], strlen(m->item[i])))/2;
-		ty = i*high + font->ascent + 1;
-		XDrawString(dpy, menuwin, gc, tx, ty, m->item[i], strlen(m->item[i]));
-                
-	}
+    for (i=0; i<n; i++) {
+        tx = (wide - XTextWidth(font, m->item[i], strlen(m->item[i])))/2;
+        ty = i*high + font->ascent + 1;
+        XDrawString(dpy, menuwin, gc, tx, ty, m->item[i], strlen(m->item[i]));
 
-	if (cur >= 0 && cur < n) {
-                XFillRectangle(dpy, menuwin, gc, 0, cur*high, wide, high);
-	}
+    }
+
+    if (cur >= 0 && cur < n) {
+        XFillRectangle(dpy, menuwin, gc, 0, cur*high, wide, high);
+    }
 }
 
 int menuhit(e, m)
@@ -145,7 +145,7 @@ Menu * m;
         XUnmapWindow(dpy, menuwin);
         return -1;
     }
-   
+
     drawn = 0;
     for (;;) {
         XMaskEvent(dpy, MenuMask, &ev);
@@ -167,7 +167,7 @@ Menu * m;
                 i = -1;
             else if (i < 0 || i >= n)
                 i = -1;
-            else 
+            else
                 m->lasthit = i;
             if (!nobuttons(&ev.xbutton))
                 i = -1;
@@ -175,7 +175,7 @@ Menu * m;
             XUnmapWindow(dpy, menuwin);
             return i;
         case MotionNotify:
-	    draw_text(&drawn, wide, high, n, cur, m);
+            draw_text(&drawn, wide, high, n, cur, m);
             x = ev.xbutton.x;
             y = ev.xbutton.y;
             old = cur;
@@ -194,7 +194,7 @@ Menu * m;
                 XFillRectangle(dpy, menuwin, gc, 0, cur*high, wide, high);
             break;
         case Expose:
-	    draw_text(&drawn, wide, high, n, cur, m);
+            draw_text(&drawn, wide, high, n, cur, m);
         }
     }
 }
@@ -353,8 +353,7 @@ void (*recalc)();
         c->x = cx = e0->x;
         c->y = cy = e0->y;
         recalc(c, e0->x, e0->y);
-    }
-    else
+    } else
         getmouse(&cx, &cy);
     XGrabServer(dpy);
     drawbound(c);
