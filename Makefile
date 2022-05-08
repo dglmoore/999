@@ -8,9 +8,9 @@
 
 CFLAGS = -O3 -g -DSHAPE -std=gnu11
 LDFLAGS = -lXext -lX11
-BIN = /usr/bin/X11
+BIN = /usr/local/bin
 
-MANDIR = /usr/man/man1
+MANDIR = /usr/local/man/man1
 MANSUFFIX = 1
 
 #
@@ -33,12 +33,12 @@ install: 999
 	cp 999 $(BIN)/999
 
 install.man:
-	cp 9wm.man $(MANDIR)/9wm.$(MANSUFFIX)
+	cp 999.man $(MANDIR)/999.$(MANSUFFIX)
 
 $(OBJS): $(HFILES)
 
-trout: 9wm.man
-	troff -man 9wm.man >trout
+trout: 999.man
+	troff -man 999.man >trout
 
 vu: trout
 	xditview trout
