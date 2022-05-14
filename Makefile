@@ -17,7 +17,7 @@ MANSUFFIX = 1
 # These variables shouldn't need to be changed
 #
 
-OBJS = 9wm.o manage.o menu.o client.o grab.o cursor.o error.o
+OBJS = 999.o manage.o menu.o client.o grab.o cursor.o error.o
 HFILES = dat.h fns.h
 
 #
