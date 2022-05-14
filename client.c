@@ -60,7 +60,7 @@ draw_border(c, active)
 Client *c;
 int active;
 {
-    XSetWindowBackground(dpy, c->parent, active ? black : white);
+    XSetWindowBackground(dpy, c->parent, active ? activeborder : inactiveborder);
     XClearWindow(dpy, c->parent);
     if (c->hold && active)
         XDrawRectangle(dpy, c->parent, gc, 1, 1, c->dx+BORDER-1, c->dy+BORDER-1);

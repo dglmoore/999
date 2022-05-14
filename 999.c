@@ -31,6 +31,8 @@ int             initting;
 GC              gc;
 unsigned long   black;
 unsigned long   white;
+unsigned long   activeborder;
+unsigned long   inactiveborder;
 XFontStruct     *font;
 int             nostalgia;
 char            **myargv;
@@ -39,7 +41,7 @@ char            *display = NULL;
 char            *shell;
 Bool            shape;
 int             shape_event;
-int             _border = 4;
+int             _border = 6;
 int             min_cmaps;
 int             curtime;
 int             debug;
@@ -210,6 +212,8 @@ char    *argv[];
 
     black = BlackPixel(dpy, screen);
     white = WhitePixel(dpy, screen);
+    activeborder = 0x55aaaa;
+    inactiveborder = 0x9eeeee;
 
     if (fname != 0)
         if ((font = XLoadQueryFont(dpy, fname)) == 0)
