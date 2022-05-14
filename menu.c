@@ -14,7 +14,6 @@ Client  *hiddenc[MAXHIDDEN];
 int numhidden;
 int virtual = 0;
 extern int numvirtuals;
-extern FILE *barhandle;
 
 Client * currents[NUMVIRTUALS] = {
     NULL, NULL, NULL, NULL,
@@ -193,8 +192,6 @@ int n;
         return;
     else if (n >= numvirtuals)
         return;
-    fprintf(stdout, "[%d]\n", virtual + 1);
-    fprintf(barhandle, "[%d]\n", virtual + 1);
     currents[virtual] = current;
     virtual = n;
     switch_to_c(n,clients);

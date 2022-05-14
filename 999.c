@@ -51,7 +51,6 @@ Bool            click_passes = 0;
 Bool            use_keys = 1;
 int             numvirtuals = 4;
 char            *progsnames[16];
-FILE            *barhandle;
 
 Atom        exit_999;
 Atom        restart_999;
