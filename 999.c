@@ -96,10 +96,6 @@ int isdigitkey(unsigned int x) {
     }
 }
 
-void xmobar() {
-    barhandle = popen("xmobar", "w");
-}
-
 int
 main(argc, argv)
 int argc;
@@ -281,9 +277,6 @@ char    *argv[];
     nofocus();
     scanwins();
 
-    xmobar();
-    fprintf(barhandle, "[%d]\n", virtual + 1);
-
     for (;;) {
         getevent(&ev);
 
@@ -322,18 +315,6 @@ char    *argv[];
                         if (current) {
                             cmapfocus(current);
                         }
-                    } else if (getKeysym(&ev) == XK_p) {
-                        if (fork() == 0) {
-                            if (fork() == 0) {
-                                close(ConnectionNumber(dpy));
-                                execlp("dmenu_run", "dmenu_run", 0);
-                                exit(1);
-                            }
-                            exit(0);
-                        }
-                        wait((int*)0);
-                    } else if (getKeysym(&ev) == XK_Return) {
-                        spawn();
                     } else if (getKeysym(&ev) == XK_m) {
                         move(current);
                     } else if (getKeysym(&ev) == XK_r) {
