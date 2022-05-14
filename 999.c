@@ -31,8 +31,9 @@ int             initting;
 GC              gc;
 unsigned long   black;
 unsigned long   white;
-unsigned long   activeborder;
-unsigned long   inactiveborder;
+unsigned long   active_color;
+unsigned long   inactive_color;
+unsigned long   menuback_color;
 XFontStruct     *font;
 int             nostalgia;
 char            **myargv;
@@ -212,8 +213,9 @@ char    *argv[];
 
     black = BlackPixel(dpy, screen);
     white = WhitePixel(dpy, screen);
-    activeborder = 0x55aaaa;
-    inactiveborder = 0x9eeeee;
+    active_color = 0x55aaaa;
+    inactive_color = 0x9eeeee;
+    menuback_color = 0xe9ffe9;
 
     if (fname != 0)
         if ((font = XLoadQueryFont(dpy, fname)) == 0)
@@ -266,7 +268,7 @@ char    *argv[];
         XClearWindow(dpy, root);
     }
 
-    menuwin = XCreateSimpleWindow(dpy, root, 0, 0, 1, 1, 1, black, white);
+    menuwin = XCreateSimpleWindow(dpy, root, 0, 0, 1, 4, 4, active_color, menuback_color);
     initb2menu(numvirtuals);
 
     /* set selection so that 9term knows we're running */
